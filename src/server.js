@@ -7,14 +7,14 @@ const config = require('./system-life');
 const middlewares = require('./middleware')
 
 const metricsMiddleware = promBundle({
-    includeMethod: true, 
-    includePath: true, 
-    includeStatusCode: true, 
+    includeMethod: true,
+    includePath: true,
+    includeStatusCode: true,
     includeUp: true,
     promClient: {
         collectDefaultMetrics: {
         }
-      }
+    }
 });
 
 app.use(middlewares.countRequests)
@@ -32,21 +32,21 @@ app.get('/post', (req, res) => {
 
 app.post('/post', (req, res) => {
 
-    models.Post.create({title: req.body.title, content: req.body.description, summary: req.body.resumo, publishDate: Date.now()});
+    models.Post.create({ title: req.body.title, content: req.body.description, summary: req.body.resumo, publishDate: Date.now() });
     res.redirect('/');
 });
 
 app.get('/post/:id', async (req, res) => {
 
     const post = await models.Post.findByPk(req.params.id);
-    res.render('view-news',{post: post});
+    res.render('view-news', { post: post });
 });
 
 
 app.get('/', async (req, res) => {
 
     const posts = await models.Post.findAll();
-    res.render('index',{posts: posts});
+    res.render('index', { posts: posts });
 });
 
 models.initDatabase();
