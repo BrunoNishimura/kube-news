@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   stages {
-
+//Primeira Parte: Integração Contínua - CI
     stage ('Build Docker Image') {
         steps {
           script {
@@ -11,16 +11,24 @@ pipeline {
           }
         }
     }
-       stage ('Push Docker Image') {
+
+    stage ('Push Docker Image') {
+      steps {
+        script {
+          docker.withRegistry("https://registry.hub.docker.com", "dockerhub") {
+            dockerapp.push("latest")
+            dockerapp.push("${env.BUILD_ID}")
+          }              
+        }
+      }
+    }
+//Segunda Parte: Entrega Contínua - CD
+    stage ('Deploy Kubernetes') {
         steps {
-          script {
-            docker.withRegistry("https://registry.hub.docker.com", "dockerhub") {
-              dockerapp.push("latest")
-              dockerapp.push("${env.BUILD_ID}")
-            }              
+          withKubeConfig ([credentialsID: "kubeconfig"]) {
+            sh 'kubectl apply -f ./k8s/deployment.yaml'
           }
         }
-    }
-
+      }
   }
 }
