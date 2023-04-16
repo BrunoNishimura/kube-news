@@ -25,7 +25,7 @@ pipeline {
 //Segunda Parte: Entrega Contínua - CD
     stage ('Deploy Kubernetes') {
         steps {
-          withKubeConfig ([credentialsID: "kubeconfig"]) {
+          withKubeConfig ([credentialsId: 'kubeconfig']) {
             sh 'kubectl apply -f ./k8s/deployment.yaml'
           }
         }
